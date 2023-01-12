@@ -7,7 +7,7 @@ module.exports = {
 }
 
 // Database Name
-const dbName = 'orello_db'
+const dbName = 'feel-good'
 
 var dbConn = null
 
