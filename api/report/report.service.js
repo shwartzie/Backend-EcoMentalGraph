@@ -6,9 +6,9 @@ const utilService = require('../../services/util.service.js')
 async function query(filterBy = {}) {
 	try {
 		const criteria = _buildCriteria(filterBy)
-		const collection = await dbService.getCollection('board')
-		const boards = await collection.find(criteria).toArray()
-		// var boards = await collection.aggregate([
+		const collection = await dbService.getCollection('report')
+		const reports = await collection.find(criteria).toArray()
+		// var reports = await collection.aggregate([
 		//     {
 		//         $match: criteria
 		//     },
@@ -37,67 +37,67 @@ async function query(filterBy = {}) {
 		//         $unwind: '$aboutUser'
 		//     }
 		// ]).toArray()
-		// boards = boards.map(board => {
-		//     board.byUser = { _id: board.byUser._id, fullname: board.byUser.fullname }
-		//     board.aboutUser = { _id: board.aboutUser._id, fullname: board.aboutUser.fullname }
-		//     delete board.byUserId
-		//     delete board.aboutUserId
-		//     return board
+		// reports = reports.map(report => {
+		//     report.byUser = { _id: report.byUser._id, fullname: report.byUser.fullname }
+		//     report.aboutUser = { _id: report.aboutUser._id, fullname: report.aboutUser.fullname }
+		//     delete report.byUserId
+		//     delete report.aboutUserId
+		//     return report
 		// })
-		return boards
+		return reports
 	} catch (err) {
-		logger.error('cannot find boards', err)
+		logger.error('cannot find reports', err)
 		throw err
 	}
 }
 
-async function remove(boardId) {
+async function remove(reportId) {
 	try {
 		const store = asyncLocalStorage.getStore()
 		const { loggedinUser } = store
-		const collection = await dbService.getCollection('board')
+		const collection = await dbService.getCollection('report')
 		// remove only if user is owner/admin
-		const criteria = { _id: ObjectId(boardId) }
+		const criteria = { _id: ObjectId(reportId) }
 		if (!loggedinUser.isAdmin) criteria.byUserId = ObjectId(loggedinUser._id)
 		const { deletedCount } = await collection.deleteOne(criteria)
 		return deletedCount
 	} catch (err) {
-		logger.error(`cannot remove board ${boardId}`, err)
+		logger.error(`cannot remove report ${reportId}`, err)
 		throw err
 	}
 }
 
-async function update(board) {
+async function update(report) {
 	try {
-		var id = ObjectId(board._id)
-		delete board._id
-		const collection = await dbService.getCollection('board')
-		await collection.updateOne({ _id: id }, { $set: { ...board } })
-		board._id = id
-		return board
+		var id = ObjectId(report._id)
+		delete report._id
+		const collection = await dbService.getCollection('report')
+		await collection.updateOne({ _id: id }, { $set: { ...report } })
+		report._id = id
+		return report
 	} catch (err) {
-		logger.error(`cannot update board ${board._id}`, err)
+		logger.error(`cannot update report ${report._id}`, err)
 		throw err
 	}
 }
 
-async function getById(boardId) {
+async function getById(reportId) {
 	try {
-		const collection = await dbService.getCollection('board')
-		const board = collection.findOne({ _id: ObjectId(boardId) })
-		return board
+		const collection = await dbService.getCollection('report')
+		const report = collection.findOne({ _id: ObjectId(reportId) })
+		return report
 	} catch (err) {
-		logger.error(`while finding board ${boardId}, err`)
+		logger.error(`while finding report ${reportId}, err`)
 		throw err
 	}
 }
 
-async function add(board, user) {
+async function add(report, user) {
     try {
-        const boardToAdd = {
-            byUserId: ObjectId(board.byUserId),
-            aboutUserId: ObjectId(board.aboutUserId),
-            title: board.title,
+        const reportToAdd = {
+            byUserId: ObjectId(report.byUserId),
+            aboutUserId: ObjectId(report.aboutUserId),
+            title: report.title,
             title: "Robot dev proj",
             archivedAt: null,
             createdAt: Date.now(),
@@ -313,11 +313,11 @@ async function add(board, user) {
             ],
             activities: [],
         }
-        const collection = await dbService.getCollection("board")
-        await collection.insertOne(boardToAdd)
-        return boardToAdd
+        const collection = await dbService.getCollection("report")
+        await collection.insertOne(reportToAdd)
+        return reportToAdd
     } catch (err) {
-        logger.error("cannot insert board", err)
+        logger.error("cannot insert report", err)
         throw err
     }
 }
