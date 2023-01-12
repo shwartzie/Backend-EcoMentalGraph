@@ -1,7 +1,7 @@
 
 const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
-const boardService = require('../board/board.service')
+const reportService = require('../report/report.service')
 const ObjectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -38,10 +38,10 @@ async function getById(userId) {
         const user = await collection.findOne({ _id: ObjectId(userId) })
         delete user.password
 
-        user.givenBoards = await boardService.query({ byUserId: ObjectId(user._id) })
-        user.givenBoards = user.givenBoards.map(board => {
-            delete board.byUser
-            return board
+        user.givenReports = await reportService.query({ byUserId: ObjectId(user._id) })
+        user.givenReports = user.givenReports.map(report => {
+            delete report.byUser
+            return report
         })
 
         return user
