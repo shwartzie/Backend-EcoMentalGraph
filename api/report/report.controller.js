@@ -3,6 +3,7 @@ const userService = require('../user/user.service')
 const authService = require('../auth/auth.service')
 const socketService = require('../../services/socket.service')
 const reportService = require('./report.service')
+const utilService = require('../../services/util.service.js')
 async function getReports(req, res) {
     try {
         const reports = await reportService.query(req.query)
@@ -40,22 +41,18 @@ async function deleteReport(req, res) {
 
 
 async function addReport(req, res) {
-
-    var loggedinUser = authService.validateToken(req.cookies?.loginToken)
+    const {loggedInUser,mood,reportedAt} = req.body
  
     try {
-        var report = req.body
-        report.byUserId = loggedinUser._id
-        report = await reportService.add(report, loggedinUser)
-        report.aboutUser = await userService.getById(report.byUserId)
-        report.byUser = loggedinUser
-        socketService.broadcast({type: 'report-added', data: report, userId: loggedinUser._id.toString()})
-        socketService.emitToUser({type: 'report-about-you', data: report, userId: report.aboutUserId})
-        
-        const fullUser = await userService.getById(loggedinUser._id)
-        socketService.emitTo({type: 'user-updated', data: fullUser, label: fullUser._id})
+       
+        const reportId = utilService.makeId(10) // need to check if not exist in database
+        const user = await reportService.addReport({loggedInUser,reportId,mood,reportedAt})
+       
+    // socketService.broadcast({type: 'report-added', data: report, userId: loggedinUser._id.toString()})
+    // socketService.emitToUser({type: 'report-about-you', data: report, userId: report.aboutUserId})
+    // socketService.emitTo({type: 'user-updated', data: fullUser, label: fullUser._id})
 
-        res.send(report)
+        res.send({user})
 
     } catch (err) {
         logger.error('Failed to add report', err)
