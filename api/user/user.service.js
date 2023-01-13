@@ -17,15 +17,16 @@ async function query() {
          console.log("query")
     try {
         const collection = await dbService.getCollection('users')
-        console.log(collection)
+        console.log("COLLECTION", collection);
         
-        let users = await collection.toArray()
-        
-        users = users.map(user => {
-            delete user.password
-            return user
-        })
-        return users
+        let users = await collection.find().toArray() // await collection.toArray()
+        console.log('users',users)
+
+        // users = users.map(user => {
+        //     delete user.password
+        //     return user
+        // })
+        // return users
     } catch (err) {
         logger.error('cannot find users', err)
         throw err
