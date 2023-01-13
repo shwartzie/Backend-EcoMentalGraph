@@ -3,6 +3,7 @@ const userService = require('../user/user.service')
 const authService = require('../auth/auth.service')
 const socketService = require('../../services/socket.service')
 const reportService = require('./report.service')
+
 async function getReports(req, res) {
     try {
         const reports = await reportService.query(req.query)
