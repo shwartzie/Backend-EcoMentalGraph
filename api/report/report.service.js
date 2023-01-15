@@ -119,8 +119,6 @@ function _buildCriteria(filterBy) {
 module.exports = {
 	query,
 	remove,
-	add,
-	getById,
 	update,
     addReport
 }

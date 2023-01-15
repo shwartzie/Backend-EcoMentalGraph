@@ -1,11 +1,20 @@
 const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://oren:oren@cluster0.ftmm9.mongodb.net/feel-good?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
+const logger = require('./logger.service');
+const config = require('../config');
+
+
+
+
+const client = new MongoClient(config.dbURL, {
+	useNewUrlParser: true
+	, useUnifiedTopology: true
+});
+
 client.connect((err) => {
 	if (err) {
 		console.error(err);
 	} else {
-		dbConn = client.db("feel-good")
+		dbConn = client.db("feel-good");
 		// const collection = client.db("feel-good").collection("users");
 		// console.log("COLLECTION", dbConn);
 		// client.close();
@@ -13,8 +22,7 @@ client.connect((err) => {
 });
 
 
-const logger = require('./logger.service');
-const config = require('../config');
+
 
 module.exports = {
 	getCollection
@@ -26,13 +34,11 @@ const dbName = 'feel-good';
 let dbConn = null;
 
 
-
-
 async function getCollection(collectionName) {
 	// console.log("ASDFASDFASDF");
 	try {
 
-		
+
 		const collection = await dbConn.collection(collectionName);
 		// console.log("COLLECTION", collection);
 		return collection;
@@ -45,19 +51,12 @@ async function getCollection(collectionName) {
 async function connect() {
 	if (dbConn) return dbConn;
 	try {
-		// client.connect(err => {
-
-		// 	const collection = client.db("feel-good").collection("users");
-		// 	dbConn = db;
-		
-		// 	console.log("COLLECTION", collection, err);
-		// 	// client.close();
-		// });
-
-		const client = await MongoClient.connect();
-		const db = client.db(dbName);
-		dbConn = db;
-		return db;
+		client.connect(err => {
+			const db = client.db(dbName);
+			dbConn = db;
+			console.log("dbConn", dbConn);
+		});
+		return dbConn;
 	} catch (err) {
 		logger.error('Cannot Connect to DB', err);
 		throw err;

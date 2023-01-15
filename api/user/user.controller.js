@@ -3,9 +3,16 @@ const socketService = require("../../services/socket.service");
 const logger = require("../../services/logger.service");
 
 
-const userService = require('./user.service')
-const socketService = require('../../services/socket.service')
 // const logger = require('../../services/logger.service')
+
+module.exports = {
+    getUser,
+    getUsers,
+    deleteUser,
+    updateUser,
+    logout,
+    getUsersAndReports
+  };
 
 async function getUser(req, res) {
   try {
@@ -19,9 +26,20 @@ async function getUser(req, res) {
 
 async function getUsers(req, res) {
     try {
-        console.log("TRYING TO GET USERS")
         const users = await userService.query()
+        console.dir(users);
         res.send(users)
+    } catch (err) {
+        // logger.error('Failed to get users', err)
+        res.status(500).send({ err: 'Failed to get users' })
+    }
+}
+
+async function getUsersAndReports(req, res) {
+    try {
+        console.log("GETTING getUsersAndReports")
+        const payload = await userService.queryCollections()
+        res.send(payload)
     } catch (err) {
         // logger.error('Failed to get users', err)
         res.status(500).send({ err: 'Failed to get users' })
@@ -59,10 +77,4 @@ async function logout(req, res) {
         res.status(500).send({ err: 'Failed to logout user' })
     }
 }
-module.exports = {
-  getUser,
-  getUsers,
-  deleteUser,
-  updateUser,
-  logout,
-};
+

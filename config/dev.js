@@ -1,4 +1,4 @@
 module.exports = {
 	dbURL:
-		'mongodb+srv://roni:1234@cluster0.tgh0prx.mongodb.net/?retryWrites=true&w=majority'
-}
+		"mongodb+srv://oren:oren@cluster0.ftmm9.mongodb.net/feel-good?retryWrites=true&w=majority"
+};

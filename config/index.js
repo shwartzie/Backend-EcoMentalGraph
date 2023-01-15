@@ -7,7 +7,6 @@ if (false && process.env.NODE_ENV === 'production') {
 } else {
   // we are in development - return the dev keys!!!
   config = require('./dev')
-  console.log("CONFIG",config)
 }
 
 module.exports = config
